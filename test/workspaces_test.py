@@ -132,3 +132,55 @@ class TestTFCWorkspaces(TestTFCBaseTestCase):
                 break
 
         self.assertFalse(found_ws)
+
+    def test_workspaces_remote_state_consumers(self):
+        """
+        Test the Workspaces Remote State Consumers API endpoints.
+        """
+
+        # Create 3 workspaces, one to add a consumer to, one to update with.
+        workspace1_id = self._api.workspaces.create(self._get_ws_without_vcs_create_payload())["data"]["id"]
+        workspace2_id = self._api.workspaces.create(self._get_ws_without_vcs_create_payload())["data"]["id"]
+        workspace3_id = self._api.workspaces.create(self._get_ws_without_vcs_create_payload())["data"]["id"]
+
+        # Add the second workspace as a consumer to the first workspace
+        add_payload = {
+            "data": [
+                {
+                    "id": workspace2_id,
+                    "type": "workspaces"
+                }
+            ]
+        }
+        added_consumers = self._api.workspaces.add_remote_state_consumers(workspace1_id, add_payload)
+        print("ADDED", added_consumers)
+
+        # Confirm the consumers
+
+        # Update to add the third workspace as a consumer of the first workspace
+        replace_delete_payload = {
+            "data": [
+                {
+                    "id": workspace3_id,
+                    "type": "workspaces"
+                }
+            ]
+        }
+        replaced_consumers = self._api.workspaces.replace_remote_state_consumers(workspace1_id, replace_delete_payload)
+        print("REPLACED", replaced_consumers)
+
+        deleted_consumers = self._api.workspaces.add_remote_state_consumers(workspace1_id, replace_delete_payload)
+        print("DELETED", deleted_consumers)
+
+        # Confirm the consumers
+
+        # TODO: get
+
+        # Remove the third workspace as a consumer of the first workspace
+
+        # Confirm the consumers
+
+        # Destroy all workspaces
+        self._api.workspaces.destroy(workspace_id=workspace1_id)
+        self._api.workspaces.destroy(workspace_id=workspace2_id)
+        self._api.workspaces.destroy(workspace_id=workspace3_id)
