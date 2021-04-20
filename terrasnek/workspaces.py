@@ -186,7 +186,7 @@ class TFCWorkspaces(TFCEndpoint):
             - ``page`` (Optional)
             - ``page_size`` (Optional)
         """
-        url = f"{self._ws_api_v2_base_url}/{workspace_id}/relationships/remote_state_consumers"
+        url = f"{self._ws_api_v2_base_url}/{workspace_id}/relationships/remote-state-consumers"
         return self._get(url, page=page, page_size=page_size)
 
     def replace_remote_state_consumers(self, workspace_id, payload):
@@ -199,7 +199,7 @@ class TFCWorkspaces(TFCEndpoint):
         `Replace Remote State Consumers Sample Payload \
             <https://www.terraform.io/docs/cloud/api/workspaces.html#sample-payload-5>`_
         """
-        url = f"{self._ws_api_v2_base_url}/{workspace_id}/relationships/remote_state_consumers"
+        url = f"{self._ws_api_v2_base_url}/{workspace_id}/relationships/remote-state-consumers"
         return self._patch(url, data=payload)
 
     def add_remote_state_consumers(self, workspace_id, payload):
@@ -212,7 +212,7 @@ class TFCWorkspaces(TFCEndpoint):
         `Add Remote State Consumers Sample Payload \
             <https://www.terraform.io/docs/cloud/api/workspaces.html#sample-payload-6>`_
         """
-        url = f"{self._ws_api_v2_base_url}/{workspace_id}/relationships/remote_state_consumers"
+        url = f"{self._ws_api_v2_base_url}/{workspace_id}/relationships/remote-state-consumers"
         return self._post(url, data=payload)
 
     def delete_remote_state_consumers(self, workspace_id, payload):
@@ -225,6 +225,6 @@ class TFCWorkspaces(TFCEndpoint):
         `Delete Remote State Consumers Sample Payload \
             <https://www.terraform.io/docs/cloud/api/workspaces.html#sample-payload-7>`_
         """
-        url = f"{self._ws_api_v2_base_url}/{workspace_id}/relationships/remote_state_consumers"
+        url = f"{self._ws_api_v2_base_url}/{workspace_id}/relationships/remote-state-consumers"
         return self._delete(url, data=payload)
 

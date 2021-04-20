@@ -143,6 +143,9 @@ class TestTFCWorkspaces(TestTFCBaseTestCase):
         workspace2_id = self._api.workspaces.create(self._get_ws_without_vcs_create_payload())["data"]["id"]
         workspace3_id = self._api.workspaces.create(self._get_ws_without_vcs_create_payload())["data"]["id"]
 
+        gotten_consumers = self._api.workspaces.get_remote_state_consumers(workspace1_id)["data"]
+        self.assertEqual(len(gotten_consumers), 0)
+
         # Add the second workspace as a consumer to the first workspace
         add_payload = {
             "data": [
@@ -152,10 +155,11 @@ class TestTFCWorkspaces(TestTFCBaseTestCase):
                 }
             ]
         }
-        added_consumers = self._api.workspaces.add_remote_state_consumers(workspace1_id, add_payload)
-        print("ADDED", added_consumers)
+        self._api.workspaces.add_remote_state_consumers(workspace1_id, add_payload)
 
         # Confirm the consumers
+        gotten_consumers = self._api.workspaces.get_remote_state_consumers(workspace1_id)["data"]
+        self.assertIn(workspace2_id, gotten_consumers[0]["relationships"]["remote-state-consumers"]["links"]["related"])
 
         # Update to add the third workspace as a consumer of the first workspace
         replace_delete_payload = {
@@ -166,19 +170,17 @@ class TestTFCWorkspaces(TestTFCBaseTestCase):
                 }
             ]
         }
-        replaced_consumers = self._api.workspaces.replace_remote_state_consumers(workspace1_id, replace_delete_payload)
-        print("REPLACED", replaced_consumers)
-
-        deleted_consumers = self._api.workspaces.add_remote_state_consumers(workspace1_id, replace_delete_payload)
-        print("DELETED", deleted_consumers)
+        self._api.workspaces.replace_remote_state_consumers(workspace1_id, replace_delete_payload)
 
         # Confirm the consumers
+        gotten_consumers = self._api.workspaces.get_remote_state_consumers(workspace1_id)["data"]
+        self.assertIn(workspace3_id, gotten_consumers[0]["relationships"]["remote-state-consumers"]["links"]["related"])
 
-        # TODO: get
-
-        # Remove the third workspace as a consumer of the first workspace
+        self._api.workspaces.delete_remote_state_consumers(workspace1_id, replace_delete_payload)
 
         # Confirm the consumers
+        gotten_consumers = self._api.workspaces.get_remote_state_consumers(workspace1_id)["data"]
+        self.assertEqual(len(gotten_consumers), 0)
 
         # Destroy all workspaces
         self._api.workspaces.destroy(workspace_id=workspace1_id)
